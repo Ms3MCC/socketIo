@@ -2,6 +2,9 @@
 
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
+
 import { Pane } from "tweakpane";
 
 // Create a scene
@@ -35,6 +38,41 @@ scene.add(ambientLight);
 const mygroup = new THREE.Group();
 const axesHelper = new THREE.AxesHelper( 3 );
 mygroup.add(axesHelper)
+
+const loader = new FontLoader();
+loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function (font) {
+    const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+    // X-axis label
+    const xGeometry = new TextGeometry('X', {
+        font: font,
+        size: 0.5,
+        depth: 0.1,
+    });
+    const xLabel = new THREE.Mesh(xGeometry, textMaterial);
+    xLabel.position.set(3.5, 0, 0); // Slightly beyond the end of the X axis
+    mygroup.add(xLabel);
+
+    const yGeometry = new TextGeometry('Y', {
+        font: font,
+        size: 0.5,
+        depth: 0.1,
+    });
+    const yLabel = new THREE.Mesh(yGeometry, textMaterial);
+    yLabel.position.set(0, 3.5, 0); // Slightly beyond the end of the Y axis
+    mygroup.add(yLabel);
+
+    const zGeometry = new  TextGeometry('Z', {
+        font: font,
+        size: 0.5,
+        depth: 0.1,
+    });
+    const zLabel = new THREE.Mesh(zGeometry, textMaterial);
+    zLabel.position.set(0, 0, 3.5); // Slightly beyond the end of the Z axis
+    mygroup.add(zLabel);
+});
+
+
 
 scene.add(mygroup)
 
