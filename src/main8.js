@@ -27,10 +27,17 @@ renderer.setPixelRatio(window.devicePixelRatio);
 const ambientLight = new THREE.AmbientLight(0x404040, 2000);
 scene.add(ambientLight);
 //add axis
-const axisHelper= new THREE.AxesHelper(2)
-axisHelper.position.set(-15,0,0)
-scene.add(axisHelper)
+// const axisHelper= new THREE.AxesHelper(2)
+// axisHelper.position.set(-15,0,0)
+// scene.add(axisHelper)
 // Store objects
+
+const mygroup = new THREE.Group();
+const axesHelper = new THREE.AxesHelper( 3 );
+mygroup.add(axesHelper)
+
+scene.add(mygroup)
+
 const objects = [];
 let selectedObject = null; // Currently selected object
 let isDragging = false; // Track dragging state
@@ -84,7 +91,7 @@ function addObject(geometryType) {
     const mesh = new THREE.Mesh(geometry, material.clone());
     mesh.position.set(0, 0, 0);
     mesh.name = `Object ${objectCounter++}`;
-    scene.add(mesh);
+    mygroup.add(mesh);
     objects.push(mesh);
     
     updateObjectSelector();
@@ -193,13 +200,13 @@ pane.addBinding(params, "positionZ", { min: -100, max: 100, step: 0.1 }).on("cha
 });
 
 // Bind rotation controls
-pane.addBinding(params, "rotationX", { min: -Math.PI * 2, max: Math.PI * 2, step: 0.01 }).on("change", (ev) => {
+pane.addBinding(params, "rotationX", { min: -Math.PI * 200, max: Math.PI * 200, step: 0.01 }).on("change", (ev) => {
     if (selectedObject) selectedObject.rotation.x = ev.value;
 });
-pane.addBinding(params, "rotationY", { min: -Math.PI * 2, max: Math.PI * 2, step: 0.01 }).on("change", (ev) => {
+pane.addBinding(params, "rotationY", { min: -Math.PI * 200, max: Math.PI * 200, step: 0.01 }).on("change", (ev) => {
     if (selectedObject) selectedObject.rotation.y = ev.value;
 });
-pane.addBinding(params, "rotationZ", { min: -Math.PI * 2, max: Math.PI * 2, step: 0.01 }).on("change", (ev) => {
+pane.addBinding(params, "rotationZ", { min: -Math.PI * 200, max: Math.PI * 200, step: 0.01 }).on("change", (ev) => {
     if (selectedObject) selectedObject.rotation.z = ev.value;
 });
 
@@ -211,7 +218,7 @@ pane.addBinding(params, "color").on("change", (ev) => {
 // Axis ball
 // Create axis ball
 const axisBallGroup = new THREE.Group();
-scene.add(axisBallGroup);
+mygroup.add(axisBallGroup);
 
 const createAxisLine = (color, direction) => {
     const material = new THREE.LineBasicMaterial({ color });
@@ -306,6 +313,7 @@ function handleKeyboardMovement() {
         if (keysPressed["q"]) selectedObject.rotation.z -= rotationSpeed;
         if (keysPressed["e"]) selectedObject.rotation.z += rotationSpeed;
 
+
         // Update Tweakpane
         params.positionX = selectedObject.position.x;
         params.positionY = selectedObject.position.y;
@@ -315,6 +323,18 @@ function handleKeyboardMovement() {
         params.rotationZ = selectedObject.rotation.z;
         pane.refresh();
     }
+
+       //rotate group
+       if (keysPressed["g"]) mygroup.rotation.y -= rotationSpeed;
+       if (keysPressed["b"]) mygroup.rotation.y += rotationSpeed;
+       if (keysPressed["h"]) mygroup.rotation.x -= rotationSpeed;
+       if (keysPressed["f"]) mygroup.rotation.x += rotationSpeed;
+       if (keysPressed["b"]) mygroup.rotation.z -= rotationSpeed;
+       if (keysPressed["c"]) mygroup.rotation.z += rotationSpeed;
+       params2.groupRx = mygroup.rotation.x;
+       params2.groupRy = mygroup.rotation.y;
+       params2.groupRz = mygroup.rotation.z;
+       pane.refresh();
 }
 
 // Mouse interaction
@@ -368,10 +388,30 @@ function initScene() {
     selectObject(sphere);
 }
 
+const params2 = {
+  
+    groupRx: 0,
+    groupRy: 0,
+    groupRz: 0,
+};
+
+pane.addBinding(params2, "groupRx", { min: -Math.PI * 200, max: Math.PI * 200, step: 0.01 }).on("change", (ev) => {
+    mygroup.rotation.x = ev.value;
+});
+pane.addBinding(params2, "groupRy", { min: -Math.PI * 200, max: Math.PI * 200, step: 0.01 }).on("change", (ev) => {
+    mygroup.rotation.y = ev.value;
+});
+pane.addBinding(params2, "groupRz", { min: -Math.PI * 200, max: Math.PI * 200, step: 0.01 }).on("change", (ev) => {
+    mygroup.rotation.z = ev.value;
+});
+
 
 
 // Call initialization after all setup is complete
 initScene()
+
+
+
 
 
 // Animation loop
