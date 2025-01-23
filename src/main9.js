@@ -35,6 +35,23 @@ scene.add(ambientLight);
 // scene.add(axisHelper)
 // Store objects
 
+const size = 100; // Grid size
+const divisions = 50; // Number of divisions
+
+// Create grid helpers for all three planes
+const gridXZ = new THREE.GridHelper(size, divisions, 0x888888, 0x444444); // XZ plane
+const gridXY = new THREE.GridHelper(size, divisions, 0x888888, 0x444444); // XY plane
+const gridYZ = new THREE.GridHelper(size, divisions, 0x888888, 0x444444); // YZ plane
+
+// Rotate grids to align with respective planes
+gridXY.rotation.x = Math.PI / 2; // Align with the XY plane
+gridYZ.rotation.z = Math.PI / 2; // Align with the YZ plane
+
+// Add grids to the scene
+scene.add(gridXZ);
+scene.add(gridXY);
+scene.add(gridYZ);
+
 const mygroup = new THREE.Group();
 const axesHelper = new THREE.AxesHelper( 3 );
 mygroup.add(axesHelper)
