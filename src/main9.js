@@ -1,15 +1,12 @@
-
-
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
-import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
-
 import { Pane } from "tweakpane";
+import { ViewportGizmo } from "three-viewport-gizmo"
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+
 
 // Create a scene
 const scene = new THREE.Scene();
-scene.background = new THREE.Color("black");
+scene.background = new THREE.Color("white");
 
 // Setup a camera
 const camera = new THREE.PerspectiveCamera(
@@ -35,8 +32,9 @@ scene.add(ambientLight);
 // scene.add(axisHelper)
 // Store objects
 
-const size = 100; // Grid size
-const divisions = 50; // Number of divisions
+
+const size = 1000;
+const divisions = 1000;
 
 // Create grid helpers for all three planes
 const gridXZ = new THREE.GridHelper(size, divisions, 0x888888, 0x444444); // XZ plane
@@ -53,44 +51,6 @@ scene.add(gridXY);
 scene.add(gridYZ);
 
 const mygroup = new THREE.Group();
-const axesHelper = new THREE.AxesHelper( 3 );
-mygroup.add(axesHelper)
-
-const loader = new FontLoader();
-loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function (font) {
-    const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-
-    // X-axis label
-    const xGeometry = new TextGeometry('X', {
-        font: font,
-        size: 0.5,
-        depth: 0.1,
-    });
-    const xLabel = new THREE.Mesh(xGeometry, textMaterial);
-    xLabel.position.set(3.5, 0, 0); // Slightly beyond the end of the X axis
-    mygroup.add(xLabel);
-
-    const yGeometry = new TextGeometry('Y', {
-        font: font,
-        size: 0.5,
-        depth: 0.1,
-    });
-    const yLabel = new THREE.Mesh(yGeometry, textMaterial);
-    yLabel.position.set(0, 3.5, 0); // Slightly beyond the end of the Y axis
-    mygroup.add(yLabel);
-
-    const zGeometry = new  TextGeometry('Z', {
-        font: font,
-        size: 0.5,
-        depth: 0.1,
-    });
-    const zLabel = new THREE.Mesh(zGeometry, textMaterial);
-    zLabel.position.set(0, 0, 3.5); // Slightly beyond the end of the Z axis
-    mygroup.add(zLabel);
-});
-
-
-
 scene.add(mygroup)
 
 const objects = [];
@@ -103,6 +63,46 @@ const material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
 // Controls
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
+
+const options = {
+  container: document.body, // Attach to the body or any specific container
+  size: 150,               // Set the size of the gizmo
+  placement: 'bottom-left', // Position at the bottom-left corner
+  lineWidth: 2,             // Thickness of the axis lines
+  offset: {
+    left: 10,   // Offset from the left edge
+    top: 0,
+    right: 0,
+    bottom: 10, // Offset from the bottom edge
+  },
+  backgroundSphere: {
+    enabled: true, // Enable the background sphere
+    color: 0x333333, // Set a dark gray background
+    opacity: 0.8,    // Make it slightly transparent
+  },
+  x: {
+    text: 'X',
+    drawCircle: true,
+    drawLine: true,
+    colors: { main: 0xff0000 }, // Red for the X axis
+  },
+  y: {
+    text: 'Y',
+    drawCircle: true,
+    drawLine: true,
+    colors: { main: 0x00ff00 }, // Green for the Y axis
+  },
+  z: {
+    text: 'Z',
+    drawCircle: true,
+    drawLine: true,
+    colors: { main: 0x0000ff }, // Blue for the Z axis
+  },
+};
+
+const gizmo = new ViewportGizmo(camera, renderer, options);
+gizmo.attachControls(controls);
+console.log(gizmo.domElement);
 
 // Tweakpane
 const pane = new Pane();
@@ -153,8 +153,6 @@ function addObject(geometryType) {
     return mesh;
 }
 
-
-
 // Modified updateObjectSelector function
 function updateObjectSelector() {
     // Remove existing selector if it exists
@@ -190,9 +188,7 @@ function updateObjectSelector() {
     });
 }
 
-
 // Select an object
-
 function selectObject(object) {
     selectedObject = object;
     if (selectedObject) {
@@ -221,11 +217,6 @@ function selectObject(object) {
 }
 
 
-
-
-
-
-
 // Add geometry selector to Tweakpane
 pane.addBinding(params, "geometry", {
     options: {
@@ -239,8 +230,6 @@ pane.addBinding(params, "geometry", {
 pane.addButton({ title: "Add Geometry" }).on("click", () => {
     addObject(params.geometry);
 });
-
-
 
 
 // Bind position controls
@@ -275,7 +264,7 @@ pane.addBinding(params, "color").on("change", (ev) => {
 const axisBallGroup = new THREE.Group();
 mygroup.add(axisBallGroup);
 
-const createAxisLine = (color, direction) => {
+const createAxisLine1 = (color, direction) => {
     const material = new THREE.LineBasicMaterial({ color });
     const points = [
         new THREE.Vector3(0, 0, 0),
@@ -285,9 +274,9 @@ const createAxisLine = (color, direction) => {
     return new THREE.Line(geometry, material);
 };
 
-const xAxis = createAxisLine(0xff0000, new THREE.Vector3(1, 0, 0));
-const yAxis = createAxisLine(0x00ff00, new THREE.Vector3(0, 1, 0));
-const zAxis = createAxisLine(0x0000ff, new THREE.Vector3(0, 0, 1));
+const xAxis = createAxisLine1(0xff0000, new THREE.Vector3(1, 0, 0));
+const yAxis = createAxisLine1(0x00ff00, new THREE.Vector3(0, 1, 0));
+const zAxis = createAxisLine1(0x0000ff, new THREE.Vector3(0, 0, 1));
 axisBallGroup.add(xAxis, yAxis, zAxis);
 
 // Position labels (optional)
@@ -323,7 +312,6 @@ axisBallGroup.add(createAxisLabel("Z", "blue", new THREE.Vector3(0, 0, 2)));
 const keysPressed = {};
 const moveSpeed = 0.1;
 const rotationSpeed = 0.05;
-
 
 document.addEventListener("keydown", (event) => {
     // List of keys that should not trigger preventDefault (like F12, F1, and others used for dev tools)
@@ -450,24 +438,18 @@ const params2 = {
     groupRz: 0,
 };
 
-pane.addBinding(params2, "groupRx", { min: -Math.PI * 200, max: Math.PI * 200, step: 0.01 }).on("change", (ev) => {
+pane.addBinding(params2, "groupRx", { min: -Math.PI * 1, max: Math.PI * 1, step: 0.01 }).on("change", (ev) => {
     mygroup.rotation.x = ev.value;
 });
-pane.addBinding(params2, "groupRy", { min: -Math.PI * 200, max: Math.PI * 200, step: 0.01 }).on("change", (ev) => {
+pane.addBinding(params2, "groupRy", { min: -Math.PI * 1, max: Math.PI * 1, step: 0.01 }).on("change", (ev) => {
     mygroup.rotation.y = ev.value;
 });
-pane.addBinding(params2, "groupRz", { min: -Math.PI * 200, max: Math.PI * 200, step: 0.01 }).on("change", (ev) => {
+pane.addBinding(params2, "groupRz", { min: -Math.PI * 1, max: Math.PI * 1, step: 0.01 }).on("change", (ev) => {
     mygroup.rotation.z = ev.value;
 });
 
-
-
 // Call initialization after all setup is complete
 initScene()
-
-
-
-
 
 // Animation loop
 function animate() {
@@ -481,6 +463,7 @@ function animate() {
 
     controls.update();
     renderer.render(scene, camera);
+    gizmo.render();
 }
 
 animate();
@@ -490,4 +473,5 @@ window.addEventListener("resize", () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    gizmo.update();
 });
