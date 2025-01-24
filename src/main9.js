@@ -329,7 +329,7 @@ document.addEventListener("keydown", (event) => {
     }
 
     keysPressed[event.key] = true;
-    console.log("Keydown event detected:", event.key);
+    console.log("Keydown event detected:", event.key);group
 });
 
 document.addEventListener("keyup", (event) => {
@@ -438,13 +438,13 @@ const params2 = {
     groupRz: 0,
 };
 
-pane.addBinding(params2, "groupRx", { min: -Math.PI * 1, max: Math.PI * 1, step: 0.01 }).on("change", (ev) => {
+pane.addBinding(params2, "groupRx", { min: -Math.PI * 200, max: Math.PI * 200, step: 0.01 }).on("change", (ev) => {
     mygroup.rotation.x = ev.value;
 });
-pane.addBinding(params2, "groupRy", { min: -Math.PI * 1, max: Math.PI * 1, step: 0.01 }).on("change", (ev) => {
+pane.addBinding(params2, "groupRy", { min: -Math.PI * 200, max: Math.PI * 200, step: 0.01 }).on("change", (ev) => {
     mygroup.rotation.y = ev.value;
 });
-pane.addBinding(params2, "groupRz", { min: -Math.PI * 1, max: Math.PI * 1, step: 0.01 }).on("change", (ev) => {
+pane.addBinding(params2, "groupRz", { min: -Math.PI * 200, max: Math.PI * 200, step: 0.01 }).on("change", (ev) => {
     mygroup.rotation.z = ev.value;
 });
 
