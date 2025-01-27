@@ -1,14 +1,12 @@
 import * as THREE from "three";
 import { Pane } from "tweakpane";
+import { createGridHelpers } from './gridHelper.js';
 import { ViewportGizmo } from "three-viewport-gizmo"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-
-// Create a scene
 const scene = new THREE.Scene();
 scene.background = new THREE.Color("white");
 
-// Setup a camera
 const camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
@@ -17,7 +15,7 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.set(0, 5, 15);
 
-// Setup the renderer and attach to canvas
+// Attach rendere to canvas
 const canvas = document.querySelector("canvas.threejs");
 const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -27,20 +25,8 @@ renderer.setPixelRatio(window.devicePixelRatio);
 const ambientLight = new THREE.AmbientLight(0x404040, 2000);
 scene.add(ambientLight);
 
-
-const size = 1000;
-const divisions = 1000;
-
-// Create grid helpers for all three planes
-const gridXZ = new THREE.GridHelper(size, divisions, 0x888888, 0x444444); // XZ plane
-const gridXY = new THREE.GridHelper(size, divisions, 0x888888, 0x444444); // XY plane
-const gridYZ = new THREE.GridHelper(size, divisions, 0x888888, 0x444444); // YZ plane
-
-// Rotate grids to align with respective planes
-gridXY.rotation.x = Math.PI / 2; // Align with the XY plane
-gridYZ.rotation.z = Math.PI / 2; // Align with the YZ plane
-
-// Add grids to the scene
+// Creating grids
+const [gridXZ, gridXY, gridYZ] = createGridHelpers(100, 100); //size, divisions
 scene.add(gridXZ);
 scene.add(gridXY);
 scene.add(gridYZ);
@@ -365,8 +351,6 @@ initScene()
 // Animation loop
 function animate() {
     requestAnimationFrame(animate);
-
-   
     handleKeyboardMovement();
 
     controls.update();
